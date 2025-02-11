@@ -2,26 +2,32 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import pickle
 
+# Load data
 data = pd.read_csv('../../Desktop/data.csv')
 
+# Display the first few rows of the dataset
 print(data.head())
 
-# missing values
+# Check for missing values
 missing_values = data.isnull().sum()
 print("Missing Values:\n", missing_values)
 
+# Check for duplicate rows
 duplicate_count = data.duplicated().sum()
 print(f"Duplicate Rows Found: {duplicate_count}")
 
-#Check Correlation Between Features
+# Visualize correlation between features
 plt.figure(figsize=(8, 6))
 sns.heatmap(data.corr(), annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Feature Correlation Heatmap")
 plt.show()
 
-#Checking Linear Relationships
+# Visualize linear relationships between features and target
 plt.figure(figsize=(12, 4))
 
 plt.subplot(1, 3, 1)
@@ -36,32 +42,29 @@ plt.subplot(1, 3, 3)
 sns.scatterplot(x=data["Newspaper"], y=data["Sales"])
 plt.title("Newspaper vs Sales")
 
+plt.tight_layout()
 plt.show()
 
-#Creating Total_Budget to represents the total amount spent on advertising across all channels
+# Create a new feature: Total_Budget
 data["Total_Budget"] = data["TV"] + data["Radio"] + data["Newspaper"]
-data.head()
+print(data.head())
 
-#Spliting Data into Training & Testing Sets
-from sklearn.model_selection import train_test_split
+# Split data into features (X) and target (y)
+X = data.drop(columns=["Sales"])
+y = data["Sales"]
 
-X = data.drop(columns=['Sales'])
-y = data['Sales']
-
+# Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
 print("Data successfully split into training and testing sets!")
 
-# Training Linear Regression model
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import numpy as np
-
+# Train Linear Regression model
 model = LinearRegression()
 model.fit(X_train, y_train)
 
+# Make predictions
 y_pred = model.predict(X_test)
 
+# Evaluate the model
 mae = mean_absolute_error(y_test, y_pred)
 mse = mean_squared_error(y_test, y_pred)
 rmse = np.sqrt(mse)
@@ -73,11 +76,8 @@ print(f"MSE: {mse:.2f}")
 print(f"RMSE: {rmse:.2f}")
 print(f"R²: {r2:.2f}")
 
-#saving this file as pickle file
-import pickle
-
+# Save the model as a pickle file
 with open("model.pkl", "wb") as model_file:
     pickle.dump(model, model_file)
 
 print("Model saved as 'model.pkl'")
-
