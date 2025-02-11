@@ -6,7 +6,7 @@ import pandas as pd
 model = pickle.load(open("model.pkl", "rb"))
 
 # Streamlit UI
-st.title("📢 Advertising Sales Prediction App")
+st.title("🎯 Advertising Sales Prediction App")
 st.write("Enter ad spending details to predict sales.")
 
 # User Inputs
