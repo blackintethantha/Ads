@@ -3,27 +3,35 @@ import pickle
 import pandas as pd
 
 # Load the trained model
-model = pickle.load(open("model.pkl", "rb"))
+with open("model.pkl", "rb") as file:
+    model = pickle.load(file)
 
 # Streamlit UI
-st.title("🎯 Sales Prediction")
-st.write("Enter your Advertistment spending limits.")
+st.title("🎯 Advertising Sales Prediction App")
+st.write("Enter ad spending details to predict sales.")
 
 # User Inputs
-tv_budget = st.number_input("TV Budget ($)", min_value=0, value=100000)
-radio_budget = st.number_input("Radio Budget ($)", min_value=0, value=500000)
-newspaper_budget = st.number_input("Newspaper Budget ($)", min_value=0, value=250000)
+def get_budget_input(label, default):
+    return st.number_input(label, min_value=0, value=default)
 
-# Compute Total Budget (same as during model training)
-total_budget = tv_budget + radio_budget + newspaper_budget
+tv_budget = get_budget_input("TV Budget ($)", 100)
+radio_budget = get_budget_input("Radio Budget ($)", 50)
+newspaper_budget = get_budget_input("Newspaper Budget ($)", 25)
+
+# Compute Total Budget
+total_budget = sum([tv_budget, radio_budget, newspaper_budget])
 
 # Prepare input data for prediction
-user_data = pd.DataFrame([[tv_budget, radio_budget, newspaper_budget, total_budget]],
-                         columns=["TV", "Radio", "Newspaper", "Total_Budget"])
+user_data = pd.DataFrame({
+    "TV": [tv_budget],
+    "Radio": [radio_budget],
+    "Newspaper": [newspaper_budget],
+    "Total_Budget": [total_budget]
+})
 
 # Predict Sales
-prediction = model.predict(user_data)
+prediction = model.predict(user_data)[0]
 
 # Show result when "Predict" button is clicked
 if st.button("Predict"):
-    st.success(f"📈 Predicted Sales: {prediction[0]:,.2f} units")
+    st.success(f"📈 Predicted Sales: {prediction:,.2f} units")
