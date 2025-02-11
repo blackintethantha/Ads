@@ -6,13 +6,13 @@ import pandas as pd
 model = pickle.load(open("model.pkl", "rb"))
 
 # Streamlit UI
-st.title("🎯 Advertising Sales Prediction App")
-st.write("Enter ad spending details to predict sales.")
+st.title("🎯 Sales Prediction")
+st.write("Enter your Advertistment spending limits.")
 
 # User Inputs
-tv_budget = st.number_input("TV Budget ($)", min_value=0, value=100)
-radio_budget = st.number_input("Radio Budget ($)", min_value=0, value=50)
-newspaper_budget = st.number_input("Newspaper Budget ($)", min_value=0, value=25)
+tv_budget = st.number_input("TV Budget ($)", min_value=0, value=100000)
+radio_budget = st.number_input("Radio Budget ($)", min_value=0, value=500000)
+newspaper_budget = st.number_input("Newspaper Budget ($)", min_value=0, value=250000)
 
 # Compute Total Budget (same as during model training)
 total_budget = tv_budget + radio_budget + newspaper_budget
